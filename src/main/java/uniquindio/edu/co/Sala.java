@@ -11,6 +11,7 @@ private int filas;
 private int asientosPorFila;
 private EstadoSala estado;
 private List<Asiento> asientos;
+private List<Funcion> funciones;
 
     public Sala(String codigoSala, String nombre, int filas, int asientosPorFila) {
         if (filas < 1 || filas > 26) {
@@ -26,7 +27,18 @@ private List<Asiento> asientos;
         this.capacidad = filas * asientosPorFila;
         this.estado = EstadoSala.DISPONIBLE;
         this.asientos = new ArrayList<>();
+        this.funciones = new ArrayList<>();
         generarAsientos();
+    }
+    /**
+     * Lo llama Cine al programar una funcion en esta sala.
+     */
+    public void agregarFuncion(Funcion funcion) {
+        funciones.add(funcion);
+    }
+
+    public List<Funcion> getFunciones() {
+        return new ArrayList<>(funciones);
     }
     /**
      * Crea los asientos A1, A2... B1, B2... segun filas y asientos por fila.

@@ -1,3 +1,4 @@
+
 package uniquindio.edu.co;
 import javax.swing.JOptionPane;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -10,7 +11,6 @@ public class Main {
         int opcionDos = 0;
 
         while (opcion != 4) {
-
             opcion = Integer.parseInt(JOptionPane.showInputDialog(
                     "Ingrese la categoría\n" +
                             "1. Operador\n" +
@@ -18,7 +18,7 @@ public class Main {
                             "3. Reportes\n" +
                             "4. Salir\n"));
             switch (opcion) {
-                case 1:
+                    case 1:
 
                     while (opcionDos != 2){
 
