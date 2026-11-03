@@ -1,5 +1,8 @@
 package uniquindio.edu.co;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pelicula {
 
     private String codigo;
@@ -8,6 +11,7 @@ public class Pelicula {
     private int duracion;
     private Clasificacion clasificacion;
     private EstadoPelicula estado;
+    private List<Funcion> funciones;
 
     public Pelicula(String codigo,String nombre, Genero genero, int duracion, Clasificacion clasificacion,EstadoPelicula estado){
         this.codigo=codigo;
@@ -16,7 +20,19 @@ public class Pelicula {
         this.duracion=duracion;
         this.clasificacion= clasificacion;
         this.estado=EstadoPelicula.DISPONIBLE;
+        this.funciones = new ArrayList<>();
 
+    }
+
+    /**
+     *  Lo llama Cine al programar una funcion de esta pelicula.
+     */
+    public void agregarFuncion(Funcion funcion) {
+        funciones.add(funcion);
+    }
+
+    public List<Funcion> getFunciones() {
+        return new ArrayList<>(funciones);
     }
     public void modificar(String nombre, Genero genero, int duracion, Clasificacion clasificacion) {
         this.nombre = nombre;
@@ -55,6 +71,7 @@ public class Pelicula {
     public EstadoPelicula getEstado() {
         return estado;
     }
+
 
     @Override
     public String toString() {
