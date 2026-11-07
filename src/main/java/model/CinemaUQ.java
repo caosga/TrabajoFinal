@@ -1,5 +1,6 @@
 package model;
 import java.util.List;
+import java.util.ArrayList;
 
 public class CinemaUQ {
     private String nombreCine, nit, direccion;
@@ -32,14 +33,28 @@ public class CinemaUQ {
         this.nombreCine = nombreCine;
         this.direccion = direccion;
         this.nit = nit;
-        this.listCineSala = listCineSala;
-        this.listCinePelicula = listCinePelicula;
-        this.listCineFuncion = listCineFuncion;
-        this.listCineTarifa = listCineTarifa;
-        this.listCineVenta = listCineVenta;
-        this.listCinePersona = listCinePersona;
+        this.listCineSala = new ArrayList<>();
+        this.listCinePelicula = new ArrayList<>();
+        this.listCineFuncion = new ArrayList<>();
+        this.listCineTarifa = new ArrayList<>();
+        this.listCineVenta = new ArrayList<>();
+        this.listCinePersona = new ArrayList<>();
     }
 
+    public String agregarPelicula(Pelicula agregaPelicula){
+        this.listCinePelicula.add(agregaPelicula);
+     return"Pelicula agregada con exito.";
+    }
+
+    public String agregarSala(Sala agregarSala) {
+        this.listCineSala.add(agregarSala);
+     return"Sala agregada exitosamente.";
+    }
+
+    public String agregarFuncion(Funcion agregarFuncion){
+        this.listCineFuncion.add(agregarFuncion);
+      return "Funcion registrada";
+    }
 
     public String getNombreCine() {
         return nombreCine;
