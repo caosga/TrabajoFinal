@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="660.0" prefWidth="780.0" spacing="14.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.cinemauqjfx.viewController.PeliculaViewController">
+   <children>
+      <Label text="Gestión de películas">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <GridPane hgap="12.0" vgap="10.0">
+         <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" minWidth="120.0" prefWidth="120.0" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="300.0" />
+         </columnConstraints>
+         <children>
+            <Label text="Código:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <TextField fx:id="txtCodigo" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="txtNombre" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Género:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <ComboBox fx:id="cmbGenero" maxWidth="Infinity" promptText="Seleccione" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Duración (min):" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextField fx:id="txtDuracion" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Clasificación:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <ComboBox fx:id="cmbClasificacion" maxWidth="Infinity" promptText="Seleccione" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+         </children>
+      </GridPane>
+      <HBox alignment="CENTER" spacing="12.0">
+         <children>
+            <Button fx:id="btnRegistrar" onAction="#onRegistrarPelicula" text="Registrar película" />
+            <Button fx:id="btnActualizar" onAction="#onActualizarPelicula" text="Actualizar película" />
+            <Button fx:id="btnDeshabilitar" onAction="#onDeshabilitarPelicula" text="Deshabilitar película" />
+            <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" />
+         </children>
+      </HBox>
+      <TableView fx:id="tblListPelicula" prefHeight="320.0" VBox.vgrow="ALWAYS">
+         <columns>
+            <TableColumn fx:id="tbcCodigo" prefWidth="80.0" text="Código" />
+            <TableColumn fx:id="tbcNombre" prefWidth="220.0" text="Nombre" />
+            <TableColumn fx:id="tbcGenero" prefWidth="100.0" text="Género" />
+            <TableColumn fx:id="tbcDuracion" prefWidth="90.0" text="Duración" />
+            <TableColumn fx:id="tbcClasificacion" prefWidth="130.0" text="Clasificación" />
+            <TableColumn fx:id="tbcEstado" prefWidth="130.0" text="Estado" />
+         </columns>
+      </TableView>
+      <HBox alignment="CENTER">
+         <children>
+            <Button fx:id="btnVolver" onAction="#onVolver" prefWidth="120.0" text="Volver" />
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>
