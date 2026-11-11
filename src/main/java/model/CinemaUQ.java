@@ -1,4 +1,5 @@
 package model;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -12,34 +13,41 @@ public class CinemaUQ {
     private List<Funcion>listCineFuncion;
     private List<Tarifa>listCineTarifa;
     private List<Venta>listCineVenta;
-    private List<Persona>listCinePersona;
+    private List<Cliente>listCineCliente;
+    private List<Operario>listCineOperario;
+    private List<Administrador>listCineAdministrador;
 
     /**
      * Metodo constructor de la clase CinemaUQ
      * @param nombreCine
-     * @param direccion
      * @param nit
-     * @param listCineSala
+     * @param direccion
      * @param listCinePelicula
+     * @param listCineSala
      * @param listCineFuncion
      * @param listCineTarifa
      * @param listCineVenta
-     * @param listCinePersona
+     * @param listCineCliente
+     * @param listCineOperario
+     * @param listCineAdministrador
      */
-
-    public CinemaUQ(String nombreCine, String direccion, String nit, List<Sala> listCineSala,
-                    List<Pelicula> listCinePelicula, List<Funcion> listCineFuncion,
-                    List<Tarifa> listCineTarifa, List<Venta> listCineVenta, List<Persona> listCinePersona) {
+    public CinemaUQ(String nombreCine, String nit, String direccion, List<Pelicula> listCinePelicula,
+                    List<Sala> listCineSala, List<Funcion> listCineFuncion, List<Tarifa> listCineTarifa,
+                    List<Venta> listCineVenta, List<Cliente> listCineCliente, List<Operario> listCineOperario,
+                    List<Administrador> listCineAdministrador) {
         this.nombreCine = nombreCine;
-        this.direccion = direccion;
         this.nit = nit;
-        this.listCineSala = new ArrayList<>();
-        this.listCinePelicula = new ArrayList<>();
-        this.listCineFuncion = new ArrayList<>();
-        this.listCineTarifa = new ArrayList<>();
-        this.listCineVenta = new ArrayList<>();
-        this.listCinePersona = new ArrayList<>();
+        this.direccion = direccion;
+        this.listCinePelicula = listCinePelicula;
+        this.listCineSala = listCineSala;
+        this.listCineFuncion = listCineFuncion;
+        this.listCineTarifa = listCineTarifa;
+        this.listCineVenta = listCineVenta;
+        this.listCineCliente = listCineCliente;
+        this.listCineOperario = listCineOperario;
+        this.listCineAdministrador = listCineAdministrador;
     }
+
 
     public String agregarPelicula(Pelicula agregaPelicula){
         this.listCinePelicula.add(agregaPelicula);
@@ -48,13 +56,112 @@ public class CinemaUQ {
 
     public String agregarSala(Sala agregarSala) {
         this.listCineSala.add(agregarSala);
-     return"Sala agregada exitosamente.";
+     return "Sala agregada exitosamente.";
     }
 
     public String agregarFuncion(Funcion agregarFuncion){
         this.listCineFuncion.add(agregarFuncion);
       return "Funcion registrada";
     }
+
+    public String agregarCliente(Cliente agregarCliente){
+        this.listCineCliente.add(agregarCliente);
+        return "Cliente registrado exitosamente";
+    }
+
+    public  String agregarOperario(Operario agregarOperario){
+        this.listCineOperario.add(agregarOperario);
+        return "Operario registrado";
+    }
+
+    public String agregarAdministrador(Administrador agregarAdministrador){
+        this.listCineAdministrador.add(agregarAdministrador);
+        return "Administrador registrado";
+    }
+    public String agregarTarifa(Tarifa agregarTarifa){
+        this.listCineTarifa.add(agregarTarifa);
+        return "Tarifa agregada";
+    }
+
+    /**
+     * Metodo para la realizacion de la venta verificando la disponibilidad de asientos en la funcion
+     * @param codigoVenta
+     * @param nuevoCliente
+     * @param operario
+     * @param funcion
+     * @param boletoComprado
+     */
+    public void realizarVenta(String codigoVenta, Cliente nuevoCliente, Operario operario,
+                               Funcion funcion, List<Boleto>boletoComprado){
+
+        List<Boleto>boletosVendidos=funcion.verificaVenta(boletoComprado);
+
+        List<Asiento> asientoVedido = new ArrayList<>();
+        for(Boleto b:boletoComprado){
+        asientoVedido.add(b.asiento());
+        }
+
+        Venta ventaNueva= new Venta(codigoVenta, LocalDateTime.now(), EstadoVenta.ACTIVA, boletosVendidos.get(0).tarifa(),
+                funcion, asientoVedido, nuevoCliente, operario, boletosVendidos);
+        this.listCineVenta.add(ventaNueva);
+        funcion.registraVenta(ventaNueva);
+    }
+
+    /**
+     * Metodo para cancelar la venta de una entrada
+     * @param codigoVenta
+     * @return
+     */
+    public boolean cancelarVenta(String codigoVenta) {
+        Venta ventaACancelar = buscarVenta(codigoVenta);
+        if (ventaACancelar == null) {
+            throw new IllegalArgumentException("No existe una venta registrada con el código: " + codigoVenta);
+        }
+        if (ventaACancelar.getEstadoVenta() == EstadoVenta.CANCELADA) {
+            throw new IllegalStateException("La venta ya se encuentra cancelada.");
+        }
+        // 2. Liberar los asientos ocupados por los boletos de esta venta
+        for (Boleto b : ventaACancelar.getListBoleto()) {
+            b.asiento().setOcupado(false);
+        }
+        // 3. Cambiar el estado de la venta
+        ventaACancelar.setEstadoVenta(EstadoVenta.CANCELADA);
+
+        return true;
+    }
+
+    public Venta buscarVenta(String codigoVenta) {
+        for (Venta v: this.listCineVenta) {
+            if (v.getCodigoVenta().equalsIgnoreCase(codigoVenta)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Metodo para consultar peliculas disponibles
+     * @return
+     */
+    public List<Pelicula> consultarPeliculas() {
+        List<Pelicula> peliculasDisponibles = new ArrayList<>();
+
+        for (Pelicula p : this.listCinePelicula) {
+            if (p.getEstadoPelicula() == EstadoPelicula.DISPONIBLE) {
+            peliculasDisponibles.add(p);
+             }
+        }
+        return peliculasDisponibles;
+    }
+
+    /**
+     * Metodo para consultar las funciones programadas
+     * @return
+     */
+    public List<Funcion> consultarFunciones() {
+        return this.listCineFuncion;
+    }
+
 
     public String getNombreCine() {
         return nombreCine;
@@ -120,11 +227,27 @@ public class CinemaUQ {
         this.listCineVenta = listCineVenta;
     }
 
-    public List<Persona> getListCinePersona() {
-        return listCinePersona;
+    public List<Cliente> getListCineCliente() {
+        return listCineCliente;
     }
 
-    public void setListCinePersona(List<Persona> listCinePersona) {
-        this.listCinePersona = listCinePersona;
+    public void setListCineCliente(List<Cliente> listCineCliente) {
+        this.listCineCliente = listCineCliente;
+    }
+
+    public List<Operario> getListCineOperario() {
+        return listCineOperario;
+    }
+
+    public void setListCineOperario(List<Operario> listCineOperario) {
+        this.listCineOperario = listCineOperario;
+    }
+
+    public List<Administrador> getListCineAdministrador() {
+        return listCineAdministrador;
+    }
+
+    public void setListCineAdministrador(List<Administrador> listCineAdministrador) {
+        this.listCineAdministrador = listCineAdministrador;
     }
 }

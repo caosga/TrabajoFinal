@@ -40,6 +40,91 @@ public class Funcion {
         this.listVentaFuncion = listVentaFuncion;
     }
 
+    /**
+     * Metodo para registrar una venta
+     * @param venta
+     */
+    public void registraVenta(Venta venta){
+        this.listVentaFuncion.add(venta);
+    }
+
+    /**
+     * Metodo para verificar si los asientos estan disponibles para la venta
+     */
+    public List<Boleto>verificaVenta(List<Boleto>boletoComprado){
+        for (Boleto b : boletoComprado) {
+            Asiento asientoReal = buscarAsientoEnFuncion(b.asiento().getFila(), b.asiento().getNumero());
+            if (asientoReal == null) {
+                throw new IllegalArgumentException("El asiento "+ b.asiento().getFila() +"-"+ b.asiento().getNumero() + " no existe.");
+            }
+            if (asientoReal.isOcupado()) {
+                throw new IllegalStateException("El asiento "+ asientoReal.getFila() +"-"+ asientoReal.getNumero() + " ya se encuentra ocupado.");
+            }
+
+            asientoReal.setOcupado(true);
+        }
+        return boletoComprado;
+    }
+
+    /**
+     * Metodo para buscar el asiento de la funcion
+     * @param fila
+     * @param numero
+     * @return
+     */
+    private Asiento buscarAsientoEnFuncion(String fila, int numero) {
+        for (Asiento a : this.listAsientoFuncion) {
+            if (a.getFila().equalsIgnoreCase(fila) && a.getNumero() == numero) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Metodo para contar los asientos disponibles de una funcion
+     * @return
+     */
+    public int contarAsientosDisponibles() {
+        int contador=0;
+        for (Asiento a : this.listAsientoFuncion) {
+            if (!a.isOcupado()){
+                contador++;
+            }
+        }
+        return contador;
+    }
+
+    /**
+     * Metodo para consultar la disponibilidad de una funcion indicada
+     * @param funcionSeleccionada
+     * @return
+     */
+    public String consultarDisponibilidadFuncion(Funcion funcionSeleccionada) {
+        if (funcionSeleccionada == null) {
+            throw new IllegalArgumentException("La función seleccionada no existe.");
+        }
+
+        int totalAsientos= 0;
+        int asientosDisponibles= 0;
+        int asientosOcupados= 0;
+
+        for (Asiento a : funcionSeleccionada.getListAsientoFuncion()) {
+            totalAsientos++;
+            if (a.isOcupado()){
+                asientosOcupados++;
+            } else {
+                asientosDisponibles++;
+            }
+        }
+
+        return "=== DISPONIBILIDAD DE LA FUNCIÓN ===" +
+                "\nTotal de asientos: " + totalAsientos +
+                "\nAsientos disponibles: " + asientosDisponibles +
+                "\nAsientos ocupados: " + asientosOcupados;
+    }
+
+
     public String getCodigoFuncion() {
         return codigoFuncion;
     }

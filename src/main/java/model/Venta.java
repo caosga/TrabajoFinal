@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Venta {
     private String codigoVenta;
@@ -11,8 +12,10 @@ public class Venta {
      */
     private Tarifa theTarifa;
     private Funcion theFuncion;
-    private Asiento theAsiento;
+    private List<Asiento> listAsientoVenta;
     private Cliente theCliente;
+    private Operario theOperario;
+    private List<Boleto>listBoleto;
 
     /**
      * Metodo constructor para la clase Venta
@@ -21,18 +24,33 @@ public class Venta {
      * @param estadoVenta
      * @param theTarifa
      * @param theFuncion
-     * @param theAsiento
+     * @param listAsientoVenta
      * @param theCliente
      */
     public Venta(String codigoVenta, LocalDateTime fechaHora, EstadoVenta estadoVenta,
-                 Tarifa theTarifa, Funcion theFuncion, Asiento theAsiento, Cliente theCliente) {
+                 Tarifa theTarifa, Funcion theFuncion, List<Asiento>listAsientoVenta, Cliente theCliente, Operario theOperario,
+                 List<Boleto>listBoleto) {
         this.codigoVenta = codigoVenta;
         this.fechaHora = fechaHora;
         this.estadoVenta = estadoVenta;
         this.theTarifa = theTarifa;
         this.theFuncion = theFuncion;
-        this.theAsiento = theAsiento;
+        this.listAsientoVenta = listAsientoVenta;
         this.theCliente = theCliente;
+        this.theOperario = theOperario;
+        this.listBoleto=listBoleto;
+    }
+
+    /**
+     * Metodo para calcular el valor total de la venta
+     * @return
+     */
+    public double calcularValorTotal() {
+        double total = 0.0;
+        for (Boleto b : this.listBoleto) {
+            total += b.tarifa().getValor();
+        }
+        return total;
     }
 
     public String getCodigoVenta() {
@@ -75,12 +93,12 @@ public class Venta {
         this.theFuncion = theFuncion;
     }
 
-    public Asiento getTheAsiento() {
-        return theAsiento;
+    public List<Asiento> getListAsientoVenta() {
+        return listAsientoVenta;
     }
 
-    public void setTheAsiento(Asiento theAsiento) {
-        this.theAsiento = theAsiento;
+    public void setListAsientoVenta(List<Asiento> listAsientoVenta) {
+        this.listAsientoVenta = listAsientoVenta;
     }
 
     public Cliente getTheCliente() {
@@ -89,5 +107,21 @@ public class Venta {
 
     public void setTheCliente(Cliente theCliente) {
         this.theCliente = theCliente;
+    }
+
+    public Operario getTheOperario() {
+        return theOperario;
+    }
+
+    public void setTheOperario(Operario theOperario) {
+        this.theOperario = theOperario;
+    }
+
+    public List<Boleto> getListBoleto() {
+        return listBoleto;
+    }
+
+    public void setListBoleto(List<Boleto> listBoleto) {
+        this.listBoleto = listBoleto;
     }
 }
