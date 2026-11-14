@@ -1,4 +1,8 @@
 package model;
 
-public enum TipoEntrada {
+public enum TipoEntrada {GENERAL,
+    ESTUDIANTE,
+    NINO,
+    ADULTO_MAYOR
+
 }

@@ -2,7 +2,7 @@ package model;
 
 import java.util.List;
 
-public class Operario extends Persona implements IVender{
+public class Operario extends Persona{
     private double salario;
     /**
      * Relaciones de la clase Operario
@@ -22,9 +22,6 @@ public class Operario extends Persona implements IVender{
         this.listVentaOperario=listVentaOperario;
     }
 
-    public void registrarVentas(){};
-    public void venderEntrada(){};
-    public void cancelarVenta(){};
 
     public double getSalario() {
         return salario;

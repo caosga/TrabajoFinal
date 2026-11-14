@@ -48,20 +48,258 @@ public class CinemaUQ {
         this.listCineAdministrador = listCineAdministrador;
     }
 
-
-    public String agregarPelicula(Pelicula agregaPelicula){
-        this.listCinePelicula.add(agregaPelicula);
-     return"Pelicula agregada con exito.";
+    /**
+     * Metodo para buscar una pelicula por su codigo
+     */
+    public Pelicula buscarPelicula(String codigoPel) {
+        for (Pelicula p : this.listCinePelicula) {
+            if (p.getCodigoPel().equalsIgnoreCase(codigoPel)) {
+                return p;
+            }
+        }
+        return null;
     }
 
-    public String agregarSala(Sala agregarSala) {
-        this.listCineSala.add(agregarSala);
-     return "Sala agregada exitosamente.";
+    /**
+     * Metodo para registrar una pelicula verificando duplicados
+     * @param codigoPel
+     * @param nombre
+     * @param duracion
+     * @param genero
+     * @param clasificacion
+     * @return
+     */
+    public String registrarPelicula(String codigoPel, String nombre, int duracion, Genero genero, Clasificacion clasificacion) {
+        if (buscarPelicula(codigoPel) != null) {
+            throw new IllegalArgumentException("Ya existe una película registrada con el código: " + codigoPel);
+        }
+
+        Pelicula nuevaPelicula = new Pelicula( codigoPel, nombre, duracion, EstadoPelicula.DISPONIBLE, genero, clasificacion, new ArrayList<>() );
+        this.listCinePelicula.add(nuevaPelicula);
+
+        return "Película registrada exitosamente.";
     }
 
-    public String agregarFuncion(Funcion agregarFuncion){
-        this.listCineFuncion.add(agregarFuncion);
-      return "Funcion registrada";
+
+    /**
+     * Metodo para buscar una sala por su codigo
+     */
+    public Sala buscarSala(String codigoSala) {
+        for (Sala s : this.listCineSala) {
+            if (s.getCodigoSala().equalsIgnoreCase(codigoSala)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Metodo para registrar una sala y sus asientos
+     */
+    public String registrarSala(String codigoSala, String nombre, int capacidad) {
+        if (buscarSala(codigoSala) != null) {
+            throw new IllegalArgumentException("Ya existe una sala registrada con el código: " + codigoSala);
+        }
+
+        List<Asiento> asientosSala = getAsientos(codigoSala, capacidad);
+
+        Sala nuevaSala = new Sala( codigoSala, nombre, capacidad, EstadoSala.DISPONIBLE, asientosSala, new ArrayList<>()
+        );
+
+        this.listCineSala.add(nuevaSala);
+
+        return "Sala registrada exitosamente con " + capacidad + " asientos.";
+    }
+
+    /**
+     * Metodo para la creacion de los asientos, según capacidad, para el metodo registrarSala
+     * @param codigoSala
+     * @param capacidad
+     * @return
+     */
+    private static List<Asiento> getAsientos(String codigoSala, int capacidad) {
+        List<Asiento> asientosSala = new ArrayList<>();
+
+        for (int i = 1; i <= capacidad; i++) {
+            String codigoAsiento = codigoSala + "-A" + i;
+
+            Asiento nuevoAsiento = new Asiento( codigoAsiento,  "A",  i,  EstadoAsiento.DISPONIBLE, false,  null, new ArrayList<>()
+            );
+            asientosSala.add(nuevoAsiento);
+        }
+        return asientosSala;
+    }
+
+    /**
+     * Metodo para consultar las salas registradas
+     */
+    public List<Sala> consultarSalas() {
+        return this.listCineSala;
+    }
+
+    /**
+     * Metodo para modificar
+     */
+    public String modificarSala(String codigoSala, String nuevoNumero, int nuevaCapacidad, EstadoSala estadoSala) {
+        Sala salaAModificar = buscarSala(codigoSala);
+
+        if (salaAModificar == null) {
+            throw new IllegalArgumentException("No se puede modificar: La sala con código '" + codigoSala + "' no existe.");
+        }
+
+        salaAModificar.setCodigoSala(codigoSala);
+        salaAModificar.setNombre(nuevoNumero);
+        salaAModificar.setCapcacidad(nuevaCapacidad);
+        salaAModificar.setEstado(estadoSala);
+
+        return "Información de la sala actualizada exitosamente.";
+    }
+
+    /**
+     * Metodo para cambiar el estado de una sala por codigo
+     */
+    public String deshabilitarSala(String codigoSala) {
+        Sala salaADeshabilitar = buscarSala(codigoSala);
+
+        if (salaADeshabilitar == null) {
+            throw new IllegalArgumentException("No se puede deshabilitar: La sala con código '" + codigoSala + "' no existe.");
+        }
+
+        if (salaADeshabilitar.getEstado() == EstadoSala.FUERA_DE_SERVICIO) {
+            throw new IllegalStateException("La sala ya se encuentra fuera de servicio.");
+        }
+
+        salaADeshabilitar.setEstado(EstadoSala.FUERA_DE_SERVICIO);
+
+        return "Sala deshabilitada (fuera de servicio) exitosamente.";
+    }
+
+    /**
+     * Metodo para cambiar estado, habilitar una sala inhabilitada
+     */
+    public String habilitarSala(String codigoSala) {
+        Sala salaAHabilitar = buscarSala(codigoSala);
+
+        if (salaAHabilitar == null) {
+            throw new IllegalArgumentException("No se puede habilitar: La sala con código '" + codigoSala + "' no existe.");
+        }
+
+        if (salaAHabilitar.getEstado() == EstadoSala.DISPONIBLE) {
+            throw new IllegalStateException("La sala ya se encuentra disponible.");
+        }
+        salaAHabilitar.setEstado(EstadoSala.DISPONIBLE);
+
+        return "Sala habilitada exitosamente.";
+    }
+
+    /**
+     * Metodo para programar una funcion validando la sala
+     */
+    public String programarFuncion(String codigoFuncion, LocalDateTime fechaHora, double valorBase,
+                                   String codigoPelicula, String codigoSala) {
+        /**
+         * Busca la pelicula por su codigo
+         */
+        Pelicula pelicula = buscarPelicula(codigoPelicula);
+        if (pelicula == null) {
+            throw new IllegalArgumentException("No se puede programar: La película con código '" + codigoPelicula + "' no existe.");
+        }
+        if (pelicula.getEstadoPelicula() == EstadoPelicula.NO_DISPONIBLE) {
+            throw new IllegalStateException("No se puede programar con una película deshabilitada.");
+        }
+        /**
+         * Busca la sala por su codigo
+         */
+        Sala sala = buscarSala(codigoSala);
+        if (sala == null) {
+            throw new IllegalArgumentException("No se puede programar: La sala con código '" + codigoSala + "' no existe.");
+        }
+
+        if (sala.getEstado() == EstadoSala.FUERA_DE_SERVICIO) {
+            throw new IllegalStateException("Operación denegada: La sala seleccionada se encuentra fuera de servicio.");
+        }
+        /**
+         * Copia la lista de asientos para esta funcion
+         */
+        List<Asiento> asientosFuncion = new ArrayList<>();
+        for (Asiento aOriginal : sala.getListAsiento()) {
+            Asiento asientoFuncion = new Asiento( aOriginal.getCodigoAsiento(), aOriginal.getFila(), aOriginal.getNumero(),
+                    EstadoAsiento.DISPONIBLE,  false,  null,  new ArrayList<>()
+            );
+            asientosFuncion.add(asientoFuncion);
+        }
+        /**
+        * Crea la funcion
+        */
+        Funcion nuevaFuncion = new Funcion(codigoFuncion, fechaHora, valorBase, pelicula, EstadoFuncion.PROGRAMADA,
+                sala, asientosFuncion, new ArrayList<>()
+        );
+        this.listCineFuncion.add(nuevaFuncion);
+
+        /**
+         * Registra la funcion en la lista de sala y pelicula
+         */
+        sala.getListFuncionSala().add(nuevaFuncion);
+        pelicula.getListFuncionPelicula().add(nuevaFuncion);
+
+        return "Función programada exitosamente.";
+    }
+
+    /**
+     * Metodo para registrar una tarifa diferenciando el tipo de entrada
+     */
+    public String registrarTarifa(double valor, TipoEntrada tipoEntrada) {
+        /**
+         * Validacion de tarifa existente
+         */
+        if (buscarTarifa(tipoEntrada) != null) {
+            throw new IllegalArgumentException("Ya existe una tarifa registrada para el tipo de entrada: " + tipoEntrada);
+        }
+        /**
+         * Crea la tarifa
+         */
+        Tarifa nuevaTarifa = new Tarifa(valor, tipoEntrada, new ArrayList<>()
+        );
+        this.listCineTarifa.add(nuevaTarifa);
+        return "Tarifa registrada exitosamente para " + tipoEntrada + ".";
+    }
+
+    /**
+     * Metodo para consultar las tarifas
+     */
+    public List<Tarifa> consultarTarifas() {
+        return this.listCineTarifa;
+    }
+
+    /**
+     * Metodo para modificar una tarifa
+     */
+    public String modificarTarifa(TipoEntrada tipoEntrada, double nuevoValor) {
+        Tarifa tarifaAModificar = buscarTarifa(tipoEntrada);
+        /**
+         *Busca que si exista la tarifa a modificar
+         */
+        if (tarifaAModificar == null) {
+            throw new IllegalArgumentException("No se encontró una tarifa registrada para el tipo de entrada especificado.");
+        }
+        /**
+         * Modifica el valor de la tarifa
+         */
+        tarifaAModificar.setValor(nuevoValor);
+
+        return "Valor de la tarifa actualizado exitosamente.";
+    }
+
+    /**
+     * Metodo para buscar una tarifa según su tipo de entrada
+     */
+    public Tarifa buscarTarifa(TipoEntrada tipoEntrada) {
+        for (Tarifa t : this.listCineTarifa) {
+            if (t.getTipoEntrada() == tipoEntrada) { // Al ser un Enum, se puede comparar de forma segura con ==
+                return t;
+            }
+        }
+        return null;
     }
 
     public String agregarCliente(Cliente agregarCliente){
@@ -78,10 +316,7 @@ public class CinemaUQ {
         this.listCineAdministrador.add(agregarAdministrador);
         return "Administrador registrado";
     }
-    public String agregarTarifa(Tarifa agregarTarifa){
-        this.listCineTarifa.add(agregarTarifa);
-        return "Tarifa agregada";
-    }
+
 
     /**
      * Metodo para la realizacion de la venta verificando la disponibilidad de asientos en la funcion
@@ -91,12 +326,12 @@ public class CinemaUQ {
      * @param funcion
      * @param boletoComprado
      */
-    public void realizarVenta(String codigoVenta, Cliente nuevoCliente, Operario operario,
-                               Funcion funcion, List<Boleto>boletoComprado){
+    public void realizarVenta(String codigoVenta, Cliente nuevoCliente, Operario operario, Funcion funcion, List<Boleto>boletoComprado){
 
         List<Boleto>boletosVendidos=funcion.verificaVenta(boletoComprado);
 
         List<Asiento> asientoVedido = new ArrayList<>();
+
         for(Boleto b:boletoComprado){
         asientoVedido.add(b.asiento());
         }
@@ -120,11 +355,10 @@ public class CinemaUQ {
         if (ventaACancelar.getEstadoVenta() == EstadoVenta.CANCELADA) {
             throw new IllegalStateException("La venta ya se encuentra cancelada.");
         }
-        // 2. Liberar los asientos ocupados por los boletos de esta venta
+
         for (Boleto b : ventaACancelar.getListBoleto()) {
             b.asiento().setOcupado(false);
         }
-        // 3. Cambiar el estado de la venta
         ventaACancelar.setEstadoVenta(EstadoVenta.CANCELADA);
 
         return true;
@@ -160,6 +394,89 @@ public class CinemaUQ {
      */
     public List<Funcion> consultarFunciones() {
         return this.listCineFuncion;
+    }
+
+
+    /**
+     * Metodo para generar el reporte genera de entradas vendidas
+     */
+    public int calcularTotalEntradasVendidas() {
+        int totalEntradas = 0;
+        for (Venta v : this.listCineVenta) {
+            if (v.getEstadoVenta() != EstadoVenta.CANCELADA) { // Nota: ajustado a getEstadoVenta() según tu atributo
+                totalEntradas += v.getListBoleto().size(); // Usando listBoleto
+            }
+        }
+        return totalEntradas;
+    }
+
+    /**
+     * Metodo para generar reporte de los ingresos por entradas vendidas
+     */
+    public double calcularTotalIngresos() {
+        double totalIngresos = 0.0;
+        for (Venta v : this.listCineVenta) {
+            if (v.getEstadoVenta() != EstadoVenta.CANCELADA) {
+                // Si la venta calcula el total multiplicando la tarifa por los boletos:
+                double valorTarifa = v.getTheTarifa().getValor();
+                int cantidadBoletos = v.getListBoleto().size();
+                totalIngresos += (valorTarifa * cantidadBoletos);
+            }
+        }
+        return totalIngresos;
+    }
+
+    /**
+     * Metodo para obtener la pelicula más vendida
+     * @return
+     */
+    public Pelicula obtenerPeliculaMasVendida() {
+        if (this.listCinePelicula.isEmpty()) {
+            return null;
+        }
+
+        Pelicula peliculaMasVendida = null;
+        int maxEntradas = -1;
+
+        for (Pelicula p : this.listCinePelicula) {
+            int entradasPelicula= 0;
+
+            for (Venta v : this.listCineVenta) {
+                if (v.getEstadoVenta() != EstadoVenta.CANCELADA) {
+
+                    if (v.getTheFuncion() != null && v.getTheFuncion().getThePelicula().equals(p)) {
+
+                        entradasPelicula += v.getListBoleto().size();
+                    }
+                }
+            }
+
+            if (entradasPelicula > maxEntradas) {
+                maxEntradas = entradasPelicula;
+                peliculaMasVendida = p;
+            }
+        }
+        return peliculaMasVendida;
+    }
+
+    /**
+     * Metodo para generar un reporte de porcentaje de ocupacion de una funcion
+     */
+    public ReporteOcupacionFuncion generarReporteOcupacion(Funcion funcion) {
+        if (funcion == null) {
+            throw new IllegalArgumentException("La función especificada no existe.");
+        }
+
+        int totalAsientos = funcion.getListAsientoFuncion().size();
+        int asientosDisponibles = funcion.contarAsientosDisponibles();
+        int asientosOcupados = totalAsientos - asientosDisponibles;
+
+        double porcentajeOcupacion = 0.0;
+        if (totalAsientos > 0) {
+            porcentajeOcupacion = (double) asientosOcupados / totalAsientos * 100.0;
+        }
+
+        return new ReporteOcupacionFuncion(asientosDisponibles, asientosOcupados, porcentajeOcupacion);
     }
 
 

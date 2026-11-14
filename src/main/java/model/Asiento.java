@@ -14,25 +14,16 @@ public class Asiento {
     private Funcion theFuncion;
     private List<Venta>listAsientoVenta;
 
-    /**
-     * Metodo constructor de la clase Asiento
-     * @param codigoAsiento
-     * @param fila
-     * @param numero
-     * @param estadoAsiento
-     * @param theFuncion
-     * @param listAsientoVenta
-     * @param ocupado
-     */
-    public Asiento(String codigoAsiento, String fila, int numero, EstadoAsiento estadoAsiento,
-                   Funcion theFuncion, List<Venta> listAsientoVenta, boolean ocupado) {
+    public Asiento(String codigoAsiento, String fila, int numero,
+                   EstadoAsiento estadoAsiento, boolean ocupado,
+                   Funcion theFuncion, List<Venta> listAsientoVenta) {
         this.codigoAsiento = codigoAsiento;
         this.fila = fila;
         this.numero = numero;
         this.estadoAsiento = estadoAsiento;
+        this.ocupado = ocupado;
         this.theFuncion = theFuncion;
         this.listAsientoVenta = listAsientoVenta;
-        this.ocupado=ocupado;
     }
 
     public String getCodigoAsiento() {

@@ -4,7 +4,7 @@ import java.util.List;
 public class Sala {
     private String codigoSala;
     private String nombre;
-    private int capcacidad;
+    private int capacidad;
     private EstadoSala estado;
 
     /**
@@ -26,7 +26,7 @@ public class Sala {
                 EstadoSala estado, List<Asiento> listAsiento, List<Funcion> listFuncionSala) {
         this.codigoSala = codigoSala;
         this.nombre = nombre;
-        this.capcacidad = capcacidad;
+        this.capacidad = capcacidad;
         this.estado = estado;
         this.listAsiento = listAsiento;
         this.listFuncionSala = listFuncionSala;
@@ -49,11 +49,11 @@ public class Sala {
     }
 
     public int getCapcacidad() {
-        return capcacidad;
+        return capacidad;
     }
 
     public void setCapcacidad(int capcacidad) {
-        this.capcacidad = capcacidad;
+        this.capacidad = capcacidad;
     }
 
     public EstadoSala getEstado() {

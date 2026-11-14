@@ -82,7 +82,7 @@ public class Funcion {
     }
 
     /**
-     * Metodo para contar los asientos disponibles de una funcion
+     * Metodo para contar los asientos disponibles de esta funcion
      * @return
      */
     public int contarAsientosDisponibles() {
@@ -95,33 +95,36 @@ public class Funcion {
         return contador;
     }
 
+    @Override
+    public String toString() {
+        return "Función [Película: " + thePelicula.getNombre() +
+                ", Sala: " + theSala.getCodigoSala() +
+                ", Fecha y hora: " + fechaHora +
+                ", Precio: " + valorBase +
+                ", Disponibles: " + contarAsientosDisponibles() + "]";
+    }
+
+
     /**
-     * Metodo para consultar la disponibilidad de una funcion indicada
-     * @param funcionSeleccionada
-     * @return
+     * Metodo para consultar una funcion y la disponibiidad de sus asientos
      */
     public String consultarDisponibilidadFuncion(Funcion funcionSeleccionada) {
         if (funcionSeleccionada == null) {
             throw new IllegalArgumentException("La función seleccionada no existe.");
         }
 
-        int totalAsientos= 0;
-        int asientosDisponibles= 0;
-        int asientosOcupados= 0;
+        StringBuilder reporte = new StringBuilder();
+
+        reporte.append("Función: ").append(funcionSeleccionada.getThePelicula().getNombre()).append("\n");
+        reporte.append("Sala: ").append(funcionSeleccionada.getTheSala().getCodigoSala()).append("\n");
+        reporte.append("Hora: ").append(funcionSeleccionada.getFechaHora()).append("\n");
+        reporte.append("----------------------------\n"); // Línea divisoria tal como en el diseño
 
         for (Asiento a : funcionSeleccionada.getListAsientoFuncion()) {
-            totalAsientos++;
-            if (a.isOcupado()){
-                asientosOcupados++;
-            } else {
-                asientosDisponibles++;
-            }
+            String estadoTexto = a.isOcupado() ? "Ocupado" : "Disponible";
+            reporte.append(a.getCodigoAsiento()).append(" ").append(estadoTexto).append("\n");
         }
-
-        return "=== DISPONIBILIDAD DE LA FUNCIÓN ===" +
-                "\nTotal de asientos: " + totalAsientos +
-                "\nAsientos disponibles: " + asientosDisponibles +
-                "\nAsientos ocupados: " + asientosOcupados;
+        return reporte.toString();
     }
 
 
