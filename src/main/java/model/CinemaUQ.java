@@ -1,4 +1,5 @@
 package model;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
@@ -378,7 +379,7 @@ public class CinemaUQ {
      * @return
      */
     public List<Pelicula> consultarPeliculas() {
-        List<Pelicula> peliculasDisponibles = new ArrayList<>();
+        List<Pelicula> peliculasDisponibles= new ArrayList<>();
 
         for (Pelicula p : this.listCinePelicula) {
             if (p.getEstadoPelicula() == EstadoPelicula.DISPONIBLE) {
@@ -396,68 +397,58 @@ public class CinemaUQ {
         return this.listCineFuncion;
     }
 
-
     /**
-     * Metodo para generar el reporte genera de entradas vendidas
+     * Metodo para generar el reporte general de entradas vendidas e ingresos
      */
-    public int calcularTotalEntradasVendidas() {
+    public ReporteGeneralVentas generarReporteGeneralVentas() {
         int totalEntradas = 0;
-        for (Venta v : this.listCineVenta) {
-            if (v.getEstadoVenta() != EstadoVenta.CANCELADA) { // Nota: ajustado a getEstadoVenta() según tu atributo
-                totalEntradas += v.getListBoleto().size(); // Usando listBoleto
-            }
-        }
-        return totalEntradas;
-    }
-
-    /**
-     * Metodo para generar reporte de los ingresos por entradas vendidas
-     */
-    public double calcularTotalIngresos() {
         double totalIngresos = 0.0;
+
         for (Venta v : this.listCineVenta) {
             if (v.getEstadoVenta() != EstadoVenta.CANCELADA) {
-                // Si la venta calcula el total multiplicando la tarifa por los boletos:
-                double valorTarifa = v.getTheTarifa().getValor();
                 int cantidadBoletos = v.getListBoleto().size();
-                totalIngresos += (valorTarifa * cantidadBoletos);
+                totalEntradas += cantidadBoletos;
+
+                if (v.getTheTarifa() != null) {
+                    double valorTarifa = v.getTheTarifa().getValor();
+                    totalIngresos += (valorTarifa * cantidadBoletos);
+                }
             }
         }
-        return totalIngresos;
+
+        return new ReporteGeneralVentas(totalEntradas, totalIngresos);
     }
 
     /**
-     * Metodo para obtener la pelicula más vendida
+     * Metodo para generar el reporte de la pelicula mas vendida
      * @return
      */
-    public Pelicula obtenerPeliculaMasVendida() {
+    public ReportePeliculaMasVendida obtenerPeliculaMasVendida() {
         if (this.listCinePelicula.isEmpty()) {
             return null;
         }
 
         Pelicula peliculaMasVendida = null;
-        int maxEntradas = -1;
+        int maxEntradas= -1;
 
         for (Pelicula p : this.listCinePelicula) {
-            int entradasPelicula= 0;
+            int entradasPelicula = 0;
 
             for (Venta v : this.listCineVenta) {
                 if (v.getEstadoVenta() != EstadoVenta.CANCELADA) {
-
                     if (v.getTheFuncion() != null && v.getTheFuncion().getThePelicula().equals(p)) {
-
                         entradasPelicula += v.getListBoleto().size();
                     }
                 }
             }
-
             if (entradasPelicula > maxEntradas) {
-                maxEntradas = entradasPelicula;
-                peliculaMasVendida = p;
+                maxEntradas= entradasPelicula;
+                peliculaMasVendida= p;
             }
         }
-        return peliculaMasVendida;
+        return new ReportePeliculaMasVendida(peliculaMasVendida, maxEntradas);
     }
+
 
     /**
      * Metodo para generar un reporte de porcentaje de ocupacion de una funcion
@@ -471,12 +462,29 @@ public class CinemaUQ {
         int asientosDisponibles = funcion.contarAsientosDisponibles();
         int asientosOcupados = totalAsientos - asientosDisponibles;
 
-        double porcentajeOcupacion = 0.0;
+        double porcentajeOcupacion= 0.0;
         if (totalAsientos > 0) {
-            porcentajeOcupacion = (double) asientosOcupados / totalAsientos * 100.0;
+            porcentajeOcupacion= (double) asientosOcupados / totalAsientos * 100.0;
         }
 
         return new ReporteOcupacionFuncion(asientosDisponibles, asientosOcupados, porcentajeOcupacion);
+    }
+
+    /**
+     * Metodo para generar el reporte de una funcion por fecha
+     */
+    public ReporteFuncionesFecha consultarFuncionesPorFecha(LocalDate fechaBuscada) {
+        List<Funcion> funcionesFiltradas = new ArrayList<>();
+
+        for (Funcion f : this.listCineFuncion) {
+            // Comparamos únicamente la fecha ignorando la hora
+            if (f.getFechaHora() != null && f.getFechaHora().toLocalDate().equals(fechaBuscada)) {
+                if (f.getEstadoFuncion() == EstadoFuncion.PROGRAMADA) {
+                    funcionesFiltradas.add(f);
+                }
+            }
+        }
+        return new ReporteFuncionesFecha(fechaBuscada, funcionesFiltradas);
     }
 
 
