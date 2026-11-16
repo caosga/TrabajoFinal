@@ -1,6 +1,10 @@
 package model;
 
+import exceptions.AsientoOcupadoException;
+import exceptions.SalaNoDisponibleException;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Funcion {
@@ -40,30 +44,69 @@ public class Funcion {
         this.listVentaFuncion = listVentaFuncion;
     }
 
-    /**
-     * Metodo para registrar una venta
-     * @param venta
-     */
-    public void registraVenta(Venta venta){
+    public void registraVenta(Venta venta) {
+        if (venta == null) {
+            return;
+        }
         this.listVentaFuncion.add(venta);
+
+        /* Marca ocuapdo el asiento vendido en el boleto*/
+        if (venta.getListBoleto() != null) {
+            for (Boleto b : venta.getListBoleto()) {
+                Asiento asientoBoleto = b.asiento();
+                if (asientoBoleto != null) {
+                    Asiento asientoEnFuncion = buscarAsientoEnFuncion(
+                            asientoBoleto.getFila(),
+                            asientoBoleto.getNumero()
+                    );
+                    if (asientoEnFuncion != null) {
+                        asientoEnFuncion.setEstadoAsiento(EstadoAsiento.OCUPADO);
+                    }
+                }
+            }
+        }
+    }
+
+    public List<Boleto> verificaVenta(List<Boleto> boletosSolicitados)
+            throws SalaNoDisponibleException, AsientoOcupadoException {
+        /*  Verifica que si haya asientos disponibles para la funcion*/
+        if (this.contarAsientosDisponibles() <= 0 || this.contarAsientosDisponibles() < boletosSolicitados.size()) {
+            throw new SalaNoDisponibleException("No hay suficientes asientos disponibles para esta función.");
+        }
+
+        /* Valida que el cliente no tome un asiento ocupado o duplicado*/
+        List<String> asientosRevisados = new ArrayList<>();
+        for (Boleto b : boletosSolicitados) {
+            Asiento asiento = b.asiento();
+            if (asiento == null || !esAsientoDisponible(asiento) || asientosRevisados.contains(asiento.getCodigoAsiento())) {
+                throw new AsientoOcupadoException("El asiento " + (asiento != null ? asiento.getCodigoAsiento() : "") + " ya está ocupado o duplicado.");
+            }
+            asientosRevisados.add(asiento.getCodigoAsiento());
+        }
+        return boletosSolicitados;
     }
 
     /**
-     * Metodo para verificar si los asientos estan disponibles para la venta
+     * Verifica si un asiento específico está disponible para esta función
+     * @return true si está disponible, false si esta en una venta activa.
      */
-    public List<Boleto>verificaVenta(List<Boleto>boletoComprado){
-        for (Boleto b : boletoComprado) {
-            Asiento asientoReal = buscarAsientoEnFuncion(b.asiento().getFila(), b.asiento().getNumero());
-            if (asientoReal == null) {
-                throw new IllegalArgumentException("El asiento "+ b.asiento().getFila() +"-"+ b.asiento().getNumero() + " no existe.");
-            }
-            if (asientoReal.isOcupado()) {
-                throw new IllegalStateException("El asiento "+ asientoReal.getFila() +"-"+ asientoReal.getNumero() + " ya se encuentra ocupado.");
-            }
-
-            asientoReal.setOcupado(true);
+    private boolean esAsientoDisponible(Asiento asientoBuscado) {
+        // 1. Verificar que el asiento exista en la sala de esta función
+        if (this.theSala == null || !this.theSala.getListAsiento().contains(asientoBuscado)) {
+            return false;
         }
-        return boletoComprado;
+
+        /* Verifica en la lista de venta funcion si el asiento está ocupado */
+        for (Venta v : this.listVentaFuncion) {
+            if (v.getEstadoVenta() != EstadoVenta.CANCELADA) {
+                for (Boleto b : v.getListBoleto()) {
+                    if (b.asiento().equals(asientoBuscado)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -86,13 +129,13 @@ public class Funcion {
      * @return
      */
     public int contarAsientosDisponibles() {
-        int contador=0;
+        int disponibles = 0;
         for (Asiento a : this.listAsientoFuncion) {
-            if (!a.isOcupado()){
-                contador++;
+            if (a.getEstadoAsiento() == EstadoAsiento.DISPONIBLE) {
+                disponibles++;
             }
         }
-        return contador;
+        return disponibles;
     }
 
     @Override
@@ -118,13 +161,33 @@ public class Funcion {
         reporte.append("Función: ").append(funcionSeleccionada.getThePelicula().getNombre()).append("\n");
         reporte.append("Sala: ").append(funcionSeleccionada.getTheSala().getCodigoSala()).append("\n");
         reporte.append("Hora: ").append(funcionSeleccionada.getFechaHora()).append("\n");
-        reporte.append("----------------------------\n"); // Línea divisoria tal como en el diseño
+        reporte.append("----------------------------\n");
 
         for (Asiento a : funcionSeleccionada.getListAsientoFuncion()) {
-            String estadoTexto = a.isOcupado() ? "Ocupado" : "Disponible";
+            String estadoTexto = (a.getEstadoAsiento() == EstadoAsiento.OCUPADO) ? "Ocupado" : "Disponible";
             reporte.append(a.getCodigoAsiento()).append(" ").append(estadoTexto).append("\n");
         }
         return reporte.toString();
+    }
+
+    /**
+     * Metodo para liberar asientos asociados a una lista de boletos de una venta cancelada.
+     */
+    public void liberarAsientos(List<Boleto> boletosCancelados) {
+        if (boletosCancelados == null) {
+            return;
+        }
+
+        for (Boleto b : boletosCancelados) {
+            Asiento asientoBoleto = b.asiento();
+            if (asientoBoleto != null) {
+                Asiento asientoEnFuncion = buscarAsientoEnFuncion(asientoBoleto.getFila(), asientoBoleto.getNumero());
+
+                if (asientoEnFuncion != null) {
+                    asientoEnFuncion.setEstadoAsiento(EstadoAsiento.DISPONIBLE);
+                }
+            }
+        }
     }
 
 

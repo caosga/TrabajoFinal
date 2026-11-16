@@ -7,21 +7,18 @@ public class Asiento {
     private String fila;
     private int numero;
     private EstadoAsiento estadoAsiento;
-    private boolean ocupado;
     /**
      * Relaciones de clase Asiento
      */
     private Funcion theFuncion;
     private List<Venta>listAsientoVenta;
 
-    public Asiento(String codigoAsiento, String fila, int numero,
-                   EstadoAsiento estadoAsiento, boolean ocupado,
+    public Asiento(String codigoAsiento, String fila, int numero, EstadoAsiento estadoAsiento,
                    Funcion theFuncion, List<Venta> listAsientoVenta) {
         this.codigoAsiento = codigoAsiento;
         this.fila = fila;
         this.numero = numero;
         this.estadoAsiento = estadoAsiento;
-        this.ocupado = ocupado;
         this.theFuncion = theFuncion;
         this.listAsientoVenta = listAsientoVenta;
     }
@@ -72,13 +69,4 @@ public class Asiento {
 
     public void setListAsientoVenta(List<Venta> listAsientoVenta) {
         this.listAsientoVenta = listAsientoVenta;
-    }
-
-    public boolean isOcupado() {
-        return ocupado;
-    }
-
-    public void setOcupado(boolean ocupado) {
-        this.ocupado = ocupado;
-    }
-}
+    }}
