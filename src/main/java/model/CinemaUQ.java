@@ -139,7 +139,7 @@ public class CinemaUQ {
     }
 
     /**
-     * Metodo para modificar
+     * Metodo para modificar la información de una sala
      */
     public String modificarSala(String codigoSala, String nuevoNumero, int nuevaCapacidad, EstadoSala estadoSala) {
         Sala salaAModificar = buscarSala(codigoSala);
@@ -319,26 +319,39 @@ public class CinemaUQ {
     }
 
 
-    /**
-     * Metodo para la realizacion de la venta verificando la disponibilidad de asientos en la funcion
-     * @param codigoVenta
-     * @param nuevoCliente
-     * @param operario
-     * @param funcion
-     * @param boletoComprado
-     */
-    public void realizarVenta(String codigoVenta, Cliente nuevoCliente, Operario operario, Funcion funcion, List<Boleto>boletoComprado){
+    public void realizarVenta(String codigoVenta, Cliente nuevoCliente, Operario operario, Funcion funcion,
+                              List<Boleto> boletoComprado) throws Exception {
 
-        List<Boleto>boletosVendidos=funcion.verificaVenta(boletoComprado);
-
-        List<Asiento> asientoVedido = new ArrayList<>();
-
-        for(Boleto b:boletoComprado){
-        asientoVedido.add(b.asiento());
+        if (funcion == null || !this.listCineFuncion.contains(funcion)) {
+            throw new Exception("Error: No se puede realizar la venta porque la función no existe.");
         }
 
-        Venta ventaNueva= new Venta(codigoVenta, LocalDateTime.now(), EstadoVenta.ACTIVA, boletosVendidos.get(0).tarifa(),
-                funcion, asientoVedido, nuevoCliente, operario, boletosVendidos);
+        // 2. VALIDACIÓN EXTRA RECOMENDADA: Lista de boletos vacía
+        if (boletoComprado == null || boletoComprado.isEmpty()) {
+            throw new Exception("Error: Debe seleccionar al menos un boleto para realizar la venta.");
+        }
+
+        // 3. Delegas a la función la validación de asientos disponibles y ocupados
+        List<Boleto> boletosVendidos = funcion.verificaVenta(boletoComprado);
+
+        List<Asiento> asientoVendido = new ArrayList<>();
+
+        for (Boleto b : boletosVendidos) {
+            asientoVendido.add(b.asiento());
+        }
+
+        Venta ventaNueva = new Venta(
+                codigoVenta,
+                LocalDateTime.now(),
+                EstadoVenta.ACTIVA,
+                boletosVendidos.get(0).tarifa(),
+                funcion,
+                asientoVendido,
+                nuevoCliente,
+                operario,
+                boletosVendidos
+        );
+
         this.listCineVenta.add(ventaNueva);
         funcion.registraVenta(ventaNueva);
     }
