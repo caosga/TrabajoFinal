@@ -22,7 +22,7 @@ public class CinemaUQTest {
 
     @BeforeEach
     public void setUp() {
-        // 1. Instanciamos CinemaUQ con su constructor exacto de 11 parámetros
+        // Instanciamos CinemaUQ con su constructor
         cine = new CinemaUQ("CinemaUQ", "123456789", "Armenia, Quindío",
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -34,7 +34,7 @@ public class CinemaUQTest {
                 new ArrayList<>()
         );
 
-        // 2. Película (ajusta Genero.values()[0] o Clasificacion.values()[0] por tus constantes exactas si prefieres)
+        // Película (ajusta Genero.values()[0] o Clasificacion.values()[0] por tus constantes exactas si prefieres)
         peliculaActiva = new Pelicula("P01", "Interestelar", 169,
                 EstadoPelicula.DISPONIBLE,
                 Genero.values()[0],
@@ -66,7 +66,7 @@ public class CinemaUQTest {
 
         Tarifa tarifaEstudiante = new Tarifa(8000.0, TipoEntrada.ESTUDIANTE, new ArrayList<>());
 
-        // 6. Agregamos directamente a las listas del cine para preparar el escenario de pruebas
+        // Agregamos directamente a las listas del cine para preparar el escenario de pruebas
         cine.getListCinePelicula().add(peliculaActiva);
         cine.getListCineSala().add(salaDisponible);
         cine.getListCineSala().add(salaFueraServicio);
