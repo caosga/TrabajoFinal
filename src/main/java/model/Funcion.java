@@ -91,22 +91,15 @@ public class Funcion {
      * @return true si está disponible, false si esta en una venta activa.
      */
     private boolean esAsientoDisponible(Asiento asientoBuscado) {
-        // 1. Verificar que el asiento exista en la sala de esta función
-        if (this.theSala == null || !this.theSala.getListAsiento().contains(asientoBuscado)) {
+        if (asientoBuscado == null) {
             return false;
         }
+        Asiento asientoEnFuncion = buscarAsientoEnFuncion( asientoBuscado.getFila(),  asientoBuscado.getNumero() );
 
-        /* Verifica en la lista de venta funcion si el asiento está ocupado */
-        for (Venta v : this.listVentaFuncion) {
-            if (v.getEstadoVenta() != EstadoVenta.CANCELADA) {
-                for (Boleto b : v.getListBoleto()) {
-                    if (b.asiento().equals(asientoBuscado)) {
-                        return false;
-                    }
-                }
-            }
+        if (asientoEnFuncion == null) {
+            return false;
         }
-        return true;
+        return asientoEnFuncion.getEstadoAsiento() == EstadoAsiento.DISPONIBLE;
     }
 
     /**

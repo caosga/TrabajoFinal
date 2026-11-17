@@ -302,17 +302,19 @@ public class CinemaUQ {
 
     /**
      * Metodo para realizar la venta
+     *
      * @param codigoVenta
      * @param nuevoCliente
      * @param operario
      * @param funcion
      * @param boletoComprado
+     * @return
      * @throws FuncionNoEncontradaException
      * @throws SalaNoDisponibleException
      * @throws AsientoOcupadoException
      */
-    public void realizarVenta(String codigoVenta, Cliente nuevoCliente, Operario operario, Funcion funcion,
-                              List<Boleto> boletoComprado)
+    public Venta realizarVenta(String codigoVenta, Cliente nuevoCliente, Operario operario, Funcion funcion,
+                               List<Boleto> boletoComprado)
             throws FuncionNoEncontradaException, SalaNoDisponibleException, AsientoOcupadoException, ElementoDuplicadoException {
         if (buscarVenta(codigoVenta) != null) {
             throw new ElementoDuplicadoException("Ya existe una venta registrada con el código: " + codigoVenta);
@@ -339,6 +341,7 @@ public class CinemaUQ {
 
         this.listCineVenta.add(ventaNueva);
         funcion.registraVenta(ventaNueva);
+        return ventaNueva;
     }
 
     /**
@@ -392,22 +395,19 @@ public class CinemaUQ {
         return this.listCineFuncion;
     }
 
+    /* REPORTES */
+
     /**
      * Metodo para generar el reporte general de entradas vendidas e ingresos
      */
     public ReporteGeneralVentas generarReporteGeneralVentas() {
-        int totalEntradas = 0;
-        double totalIngresos = 0.0;
+        int totalEntradas= 0;
+        double totalIngresos= 0.0;
 
         for (Venta v : this.listCineVenta) {
             if (v.getEstadoVenta() != EstadoVenta.CANCELADA) {
-                int cantidadBoletos = v.getListBoleto().size();
-                totalEntradas += cantidadBoletos;
-
-                if (v.getTheTarifa() != null) {
-                    double valorTarifa = v.getTheTarifa().getValor();
-                    totalIngresos += (valorTarifa * cantidadBoletos);
-                }
+                totalEntradas+= v.getListBoleto().size();
+                totalIngresos+= v.calcularValorTotal();
             }
         }
 
