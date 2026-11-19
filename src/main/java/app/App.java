@@ -150,8 +150,8 @@ public class App extends Application {
     // ------------------------------------------------------------------
     private void inicializarData() {
         try {
-            cine.agregarAdministrador(new Administrador("AD01", "Carlos Pérez", "admin@cinemauq.com", 4000000));
-            Operario operario = new Operario("OP01", "Laura Gómez", "laura@cinemauq.com", 2000000, new ArrayList<>());
+            cine.agregarAdministrador(new Administrador("AD01", "Carlos Ospina", "carlosp.admin@cinemauq.com", 4000000));
+            Operario operario = new Operario("OP01", "Tiffany López", "teffy@cinemauq.com", 2000000, new ArrayList<>());
             cine.agregarOperario(operario);
 
             cine.registrarTarifa(18000, TipoEntrada.GENERAL);
