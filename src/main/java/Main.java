@@ -86,8 +86,8 @@ public class Main {
         );
 
         // Personal
-        Administrador admin = new Administrador("Carlos Pérez", "AD01", "admin@cinemauq.com", 4000000);
-        Operario operario = new Operario("Laura Gómez", "OP01", "laura@cinemauq.com", 2000000, new ArrayList<>());
+        Administrador admin = new Administrador("Carlos Ospina", "AD01", "admin@cinemauq.com", 4000000);
+        Operario operario = new Operario("Tiffany López", "OP01", "teffy@cinemauq.com", 2000000, new ArrayList<>());
         cine.getListCineAdministrador().add(admin);
         cine.getListCineOperario().add(operario);
 
