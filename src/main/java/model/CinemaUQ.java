@@ -69,6 +69,58 @@ public class CinemaUQ {
         this.listCinePelicula.add(nuevaPelicula);
     }
 
+    /**
+     * Metodo para modificar la informacion de una pelicula (el codigo no cambia)
+     */
+    public String modificarPelicula(String codigoPel, String nuevoNombre, int nuevaDuracion,
+                                    Genero nuevoGenero, Clasificacion nuevaClasificacion) {
+        Pelicula peliculaAModificar = buscarPelicula(codigoPel);
+
+        if (peliculaAModificar == null) {
+            throw new IllegalArgumentException("No se puede modificar: La película con código '" + codigoPel + "' no existe.");
+        }
+        peliculaAModificar.setNombre(nuevoNombre);
+        peliculaAModificar.setDuracion(nuevaDuracion);
+        peliculaAModificar.setGenero(nuevoGenero);
+        peliculaAModificar.setClasificacion(nuevaClasificacion);
+
+        return "Información de la película actualizada exitosamente.";
+    }
+
+    /**
+     * Metodo para deshabilitar una pelicula (pasa a NO_DISPONIBLE)
+     */
+    public String deshabilitarPelicula(String codigoPel) {
+        Pelicula peliculaADeshabilitar = buscarPelicula(codigoPel);
+
+        if (peliculaADeshabilitar == null) {
+            throw new IllegalArgumentException("No se puede deshabilitar: La película con código '" + codigoPel + "' no existe.");
+        }
+        if (peliculaADeshabilitar.getEstadoPelicula() == EstadoPelicula.NO_DISPONIBLE) {
+            throw new IllegalStateException("La película ya se encuentra deshabilitada.");
+        }
+        peliculaADeshabilitar.setEstadoPelicula(EstadoPelicula.NO_DISPONIBLE);
+
+        return "Película deshabilitada exitosamente.";
+    }
+
+    /**
+     * Metodo para habilitar una pelicula deshabilitada (pasa a DISPONIBLE)
+     */
+    public String habilitarPelicula(String codigoPel) {
+        Pelicula peliculaAHabilitar = buscarPelicula(codigoPel);
+
+        if (peliculaAHabilitar == null) {
+            throw new IllegalArgumentException("No se puede habilitar: La película con código '" + codigoPel + "' no existe.");
+        }
+        if (peliculaAHabilitar.getEstadoPelicula() == EstadoPelicula.DISPONIBLE) {
+            throw new IllegalStateException("La película ya se encuentra disponible.");
+        }
+        peliculaAHabilitar.setEstadoPelicula(EstadoPelicula.DISPONIBLE);
+
+        return "Película habilitada exitosamente.";
+    }
+
 
     /**
      * Metodo para buscar una sala por su codigo
@@ -227,7 +279,7 @@ public class CinemaUQ {
         return "Función programada exitosamente.";
     }
 
-    private Funcion buscarFuncion(String codigoFuncion) {
+    public Funcion buscarFuncion(String codigoFuncion) {
         for (Funcion f : this.listCineFuncion) {
             if (f.getCodigoFuncion().equalsIgnoreCase(codigoFuncion)) {
                 return f;
