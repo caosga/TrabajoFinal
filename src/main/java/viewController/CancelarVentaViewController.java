@@ -81,10 +81,10 @@ public class CancelarVentaViewController {
 
     @FXML
     void initialize() {
-        ventaController = new VentaController(App.cine, App.operario);
-        tbcCodigo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getCodigo()));
-        tbcCliente.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getCliente().getNombre()));
-        tbcPelicula.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getFuncion().getPelicula().getNombre()));
+        ventaController = new VentaController(App.cine);
+        tbcCodigo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getCodigoVenta()));
+        tbcCliente.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTheCliente().getNombre()));
+        tbcPelicula.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTheFuncion().getThePelicula().getNombre()));
         tbcFuncion.setCellValueFactory(c -> new SimpleStringProperty(
                 c.getValue().getTheFuncion().getFechaHora().format(Utilidades.FORMATO_FECHA_HORA)));
         tbcAsiento.setCellValueFactory(c -> new SimpleStringProperty(

@@ -23,6 +23,8 @@
                <children>
                   <Label text="Función:" />
                   <ComboBox fx:id="cmbFuncion" maxWidth="Infinity" onAction="#onFuncionElegida" />
+                  <Label text="Operario que vende:" />
+                  <ComboBox fx:id="cmbOperario" maxWidth="Infinity" />
                   <Label text="Cliente:" />
                   <ComboBox fx:id="cmbCliente" maxWidth="Infinity" onAction="#onClienteElegido" />
                   <Label text="Tipo de entrada:" />
