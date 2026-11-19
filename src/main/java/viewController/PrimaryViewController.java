@@ -15,6 +15,14 @@ public class PrimaryViewController {
     private Button btnOperador;
 
     @FXML
+    private Button btnCine;
+
+    @FXML
+    void onCine() {
+        app.openMenuCine();
+    }
+
+    @FXML
     void onAdministrador() {
         app.openMenuAdmin();
     }

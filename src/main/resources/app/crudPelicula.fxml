@@ -43,7 +43,15 @@
             <Button fx:id="btnRegistrar" onAction="#onRegistrarPelicula" text="Registrar película" />
             <Button fx:id="btnActualizar" onAction="#onActualizarPelicula" text="Actualizar película" />
             <Button fx:id="btnDeshabilitar" onAction="#onDeshabilitarPelicula" text="Deshabilitar película" />
+            <Button fx:id="btnHabilitar" onAction="#onHabilitarPelicula" text="Habilitar película" />
             <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <Label text="Buscar por código:" />
+            <TextField fx:id="txtBuscar" prefWidth="140.0" />
+            <Button fx:id="btnBuscar" onAction="#onBuscar" text="Buscar" />
          </children>
       </HBox>
       <TableView fx:id="tblListPelicula" prefHeight="320.0" VBox.vgrow="ALWAYS">

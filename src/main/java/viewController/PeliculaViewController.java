@@ -17,9 +17,9 @@ import model.Genero;
 import model.Pelicula;
 
 /**
- * ViewController de la pantalla de peliculas (equivalente a ClienteViewController de la guia).
- * Lee lo que escribe el usuario, llama al controller y actualiza la tabla.
- * Los errores del dominio (excepciones) se muestran en una ventana Alert y la pantalla sigue abierta.
+ * Pantalla de gestion de peliculas (administrador): registrar, buscar, consultar, modificar,
+ * deshabilitar y habilitar.
+ * Los errores (excepciones) se muestran en una ventana Alert y la pantalla sigue abierta.
  */
 public class PeliculaViewController {
 
@@ -51,6 +51,15 @@ public class PeliculaViewController {
 
     @FXML
     private Button btnDeshabilitar;
+
+    @FXML
+    private Button btnHabilitar;
+
+    @FXML
+    private TextField txtBuscar;
+
+    @FXML
+    private Button btnBuscar;
 
     @FXML
     private Button btnLimpiar;
@@ -126,6 +135,34 @@ public class PeliculaViewController {
             limpiarSeleccion();
             Utilidades.mostrarInformacion(mensaje);
         } catch (IllegalArgumentException | IllegalStateException e) {
+            Utilidades.mostrarError(e.getMessage());
+        }
+    }
+
+    @FXML
+    void onHabilitarPelicula() {
+        try {
+            exigirSeleccion();
+            String mensaje = peliculaController.habilitar(selectedPelicula.getCodigoPel());
+            refrescarTabla();
+            limpiarSeleccion();
+            Utilidades.mostrarInformacion(mensaje);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            Utilidades.mostrarError(e.getMessage());
+        }
+    }
+
+    @FXML
+    void onBuscar() {
+        try {
+            String codigo = Utilidades.leerTexto(txtBuscar, "el código a buscar");
+            Pelicula pelicula = peliculaController.buscar(codigo);
+            if (pelicula == null) {
+                Utilidades.mostrarError("No existe una película con el código " + codigo + ".");
+                return;
+            }
+            tblListPelicula.getSelectionModel().select(pelicula);   // la selecciona y la pasa al formulario
+        } catch (IllegalArgumentException e) {
             Utilidades.mostrarError(e.getMessage());
         }
     }
@@ -207,6 +244,7 @@ public class PeliculaViewController {
         txtDuracion.clear();
         cmbGenero.setValue(null);
         cmbClasificacion.setValue(null);
+        txtBuscar.clear();
     }
 
     public void setApp(App app) {

@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="420.0" prefWidth="440.0" spacing="14.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.cinemauqjfx.viewController.MenuAdminViewController">
+<VBox alignment="CENTER" prefHeight="420.0" prefWidth="440.0" spacing="14.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.MenuAdminViewController">
    <children>
       <Label text="Menú del administrador">
          <font>
